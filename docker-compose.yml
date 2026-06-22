@@ -1,0 +1,13 @@
+services:
+  formulario:
+    build: .
+    container_name: formulario
+    restart: unless-stopped
+    ports:
+      # HOST_PORT (en el server Linux) : PORT (interno del contenedor)
+      - "${HOST_PORT:-3001}:${PORT:-3000}"
+    environment:
+      - PORT=${PORT:-3000}
+    volumes:
+      # Persistir registros fuera del contenedor
+      - ./data:/app/data

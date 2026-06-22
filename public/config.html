@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuración — Barrido de Activos</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/form.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Configuración</h1>
+      <a href="/lista.html" class="btn-link">← Volver a registros</a>
+    </header>
+
+    <div class="card">
+      <p class="section-title">Áreas</p>
+      <form id="area-form" class="area-add">
+        <input type="text" id="area-name" placeholder="Nombre de la nueva área" autocomplete="off">
+        <button type="submit" class="btn-submit">Agregar</button>
+      </form>
+      <ul class="area-list" id="area-list"></ul>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/js/shared.js"></script>
+  <script src="/js/config.js"></script>
+</body>
+</html>

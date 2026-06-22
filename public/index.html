@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barrido de Activos</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/form.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Barrido de Activos</h1>
+      <a href="/lista.html" class="btn-link">Ver registros</a>
+    </header>
+
+    <div class="card">
+      <form id="form" novalidate>
+
+        <p class="section-title">Datos del colaborador</p>
+
+        <div class="grid-2">
+          <div class="field">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" placeholder="Nombre completo">
+            <div class="error-msg" id="err-nombre">Campo requerido</div>
+          </div>
+          <div class="field">
+            <label for="cedula">Cédula</label>
+            <input type="text" id="cedula" placeholder="10 dígitos" maxlength="10">
+            <div class="error-msg" id="err-cedula">Debe tener exactamente 10 dígitos</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="area">Área</label>
+          <select id="area"></select>
+          <div class="error-msg" id="err-area">Seleccione un área</div>
+        </div>
+
+        <p class="section-title">Accesorios</p>
+
+        <div class="checks-grid">
+          <label class="check-item">
+            <input type="checkbox" id="acc-mouse">
+            <span>Mouse</span>
+          </label>
+          <label class="check-item">
+            <input type="checkbox" id="acc-mousepad">
+            <span>Mousepad</span>
+          </label>
+          <label class="check-item">
+            <input type="checkbox" id="acc-ventilador">
+            <span>Ventilador</span>
+          </label>
+        </div>
+
+        <p class="section-title">Equipos</p>
+
+        <div class="field">
+          <label for="serial-laptop">Serial laptop</label>
+          <div class="serial-row">
+            <label class="phone-cargador" title="Cargador laptop">
+              <input type="checkbox" id="cargador-laptop">
+              Cargador
+            </label>
+            <input type="text" id="serial-laptop" placeholder="Serial de la laptop">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="clave">Clave</label>
+          <input type="text" id="clave" placeholder="Clave del equipo">
+        </div>
+
+        <div class="field">
+          <div class="phones-header">
+            <span>Serial teléfono</span>
+            <span>Chip teléfono</span>
+            <span>Chip 2</span>
+            <span>PIN/Clave</span>
+            <span>Cargador</span>
+            <span></span>
+          </div>
+          <div class="phone-entries" id="phones-container"></div>
+          <button type="button" class="btn-add" id="btn-add-phone">+ Agregar teléfono</button>
+        </div>
+
+        <p class="section-title">Otros</p>
+
+        <div class="checks-grid">
+          <label class="check-item has-data-personal">
+            <input type="checkbox" id="datos-personales">
+            <span>El colaborador tiene datos personales en el equipo</span>
+          </label>
+        </div>
+
+        <div class="field mt-md">
+          <label for="observaciones">Observaciones</label>
+          <textarea id="observaciones" placeholder="Observaciones adicionales..."></textarea>
+        </div>
+
+        <div class="submit-row">
+          <button type="button" class="btn-reset" id="btn-reset">Limpiar</button>
+          <button type="submit" class="btn-submit" id="btn-submit">Guardar registro</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/js/shared.js"></script>
+  <script src="/js/form.js"></script>
+</body>
+</html>

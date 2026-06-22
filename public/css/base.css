@@ -1,0 +1,319 @@
+/* Shared base styles for all pages */
+
+/* Plantilla de columnas de teléfono compartida por header y filas → alinean. */
+:root { --phone-cols: 1fr 1fr 1fr 1fr 112px 32px; }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #f0f2f5;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  color: #1a1a2e;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+header h1 { font-size: 1.4rem; font-weight: 700; }
+
+.btn-link {
+  font-size: 0.875rem;
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid #2563eb;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-link:hover { background: #2563eb; color: #fff; }
+
+/* Form primitives */
+.section-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin-bottom: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+.section-title:first-of-type { margin-top: 0; padding-top: 0; border-top: none; }
+
+.field { margin-bottom: 1rem; }
+
+.mt-md { margin-top: 1rem; }
+
+label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.35rem;
+}
+
+input[type="text"],
+select,
+textarea {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 7px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: #1a1a2e;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+}
+
+input[type="text"]:focus,
+select:focus,
+textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+
+input.error { border-color: #ef4444; }
+.error-msg { font-size: 0.78rem; color: #ef4444; margin-top: 0.25rem; display: none; }
+.error-msg.visible { display: block; }
+
+textarea { resize: vertical; min-height: 90px; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+/* Checkboxes */
+.checks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.5rem;
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.75rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  user-select: none;
+}
+
+.check-item:hover { border-color: #2563eb; background: #eff6ff; }
+
+.check-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #2563eb;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.check-item span { font-size: 0.875rem; font-weight: 500; color: #374151; }
+
+.check-item.has-data-personal {
+  grid-column: 1 / -1;
+  border-color: #fbbf24;
+  background: #fffbeb;
+}
+
+.check-item.has-data-personal:hover { border-color: #f59e0b; background: #fef3c7; }
+
+/* Configuración: gestión de áreas */
+.area-add { display: flex; gap: 0.6rem; margin-bottom: 1rem; }
+.area-add input { flex: 1; }
+.area-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+.area-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 7px;
+  font-size: 0.9rem;
+}
+.area-list li.empty { color: #9ca3af; justify-content: center; }
+.btn-del {
+  padding: 0.3rem 0.7rem;
+  border: 1.5px solid #fecaca;
+  border-radius: 6px;
+  background: #fee2e2;
+  color: #dc2626;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-del:hover { background: #fecaca; }
+
+/* Serial laptop con su check de cargador al lado */
+.serial-row { display: flex; gap: 0.6rem; align-items: center; }
+.serial-row input { flex: 1; }
+
+/* Dynamic phone entries */
+.phone-entries { display: flex; flex-direction: column; gap: 0.6rem; }
+
+.phone-entry {
+  display: grid;
+  grid-template-columns: var(--phone-cols);
+  gap: 0.6rem;
+  align-items: center;
+  animation: fadeIn 0.15s ease;
+}
+
+.phone-entry input { margin: 0; }
+
+/* Celda del segundo chip: botón "+ Chip 2" o, al activarse, el input */
+.chip2-cell { display: flex; }
+.chip2-cell input { width: 100%; }
+.btn-chip2 {
+  width: 100%;
+  padding: 0.45rem;
+  border: 1.5px dashed #9ca3af;
+  border-radius: 7px;
+  background: transparent;
+  color: #6b7280;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s, color 0.15s;
+}
+.btn-chip2:hover { border-color: #2563eb; color: #2563eb; }
+
+.phone-cargador {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.6rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  user-select: none;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.phone-cargador:hover { border-color: #2563eb; background: #eff6ff; }
+
+.phone-cargador input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: #2563eb;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.btn-remove {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.btn-remove:hover { background: #fecaca; }
+
+.btn-add {
+  margin-top: 0.5rem;
+  padding: 0.45rem 0.9rem;
+  border: 1.5px dashed #9ca3af;
+  border-radius: 7px;
+  background: transparent;
+  color: #6b7280;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  width: 100%;
+}
+
+.btn-add:hover { border-color: #2563eb; color: #2563eb; }
+
+.phones-header {
+  display: grid;
+  grid-template-columns: var(--phone-cols);
+  gap: 0.6rem;
+  margin-bottom: 0.25rem;
+}
+
+.phones-header span {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  padding: 0.8rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.success { background: #16a34a; }
+.toast.fail { background: #dc2626; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ===== Móvil ===== */
+@media (max-width: 600px) {
+  body { padding: 1.5rem 0.85rem; }
+
+  .grid-2 { grid-template-columns: 1fr; }
+
+  /* En móvil el encabezado de columnas no alinea: se oculta y el
+     placeholder de cada input (Serial #1, Chip #1, PIN/Clave #1) guía. */
+  .phones-header { display: none; }
+
+  /* Cada teléfono pasa a ser una mini-tarjeta apilada */
+  .phone-entry {
+    grid-template-columns: 1fr 1fr;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.65rem;
+    background: #fafafa;
+  }
+
+  .phone-entry > [data-role="serial"] { grid-column: 1 / -1; }
+  .phone-cargador { justify-content: center; }
+  .btn-remove { width: 100%; }
+}
