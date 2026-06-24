@@ -10,6 +10,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/registros', registrosRouter);
 app.use('/api/areas', require('./src/areas.routes'));
+app.use('/api/scan', require('./src/scan.routes'));
 
 // HTTPS si existen los certificados en certs/ (generados con mkcert)
 const certPath = path.join(__dirname, 'certs', 'cert.pem');
