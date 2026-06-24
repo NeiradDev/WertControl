@@ -33,11 +33,23 @@
           <span>Escanear código de barras</span>
           <button class="btn-close" id="btn-close-scan">×</button>
         </div>
-        <div class="scan-viewport">
-          <video id="scan-video" muted playsinline></video>
-          <div class="scan-reticle"></div>
+
+        <!-- Modo cámara (solo HTTPS/localhost) -->
+        <div id="scan-camera-mode">
+          <div class="scan-viewport">
+            <video id="scan-video" muted playsinline></video>
+            <div class="scan-reticle"></div>
+          </div>
+          <p class="scan-status" id="scan-status">Apunta al código de barras…</p>
         </div>
-        <p class="scan-status" id="scan-status">Apunta al código de barras…</p>
+
+        <!-- Modo manual (HTTP, lector USB, teclado) -->
+        <div id="scan-manual-mode" style="display:none">
+          <div class="scan-manual">
+            <p class="scan-manual-hint">Escanea con lector USB o escribe la cédula</p>
+            <input type="text" id="scan-input" placeholder="Cédula / código de barras…" autocomplete="off" inputmode="numeric">
+          </div>
+        </div>
       </div>
     </div>
 

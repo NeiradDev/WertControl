@@ -107,6 +107,26 @@ reinicios, `docker compose down` y reconstrucciones de la imagen.
 
 Backup: copiar el archivo `data/registros.json`.
 
+## Migración de datos
+
+Al actualizar desde una versión anterior (donde los chips estaban dentro de cada teléfono), correr una sola vez:
+
+```bash
+# Desarrollo local
+yarn migrate
+
+# Producción con Docker
+docker compose exec <nombre-servicio> node scripts/migrate.js
+# Para ver el nombre del servicio: docker compose ps
+```
+
+El script:
+- Hace backup automático en `data/registros.bak.json`
+- Mueve `chip`/`chip2` de cada teléfono al array independiente `chips`
+- Convierte `serial` → `imei1` en los teléfonos
+- Agrega los flags `tiene_laptop`, `tiene_telefono`, `tiene_chip`
+- Es idempotente — se puede correr más de una vez sin daño
+
 ## API
 
 Base: `/api/registros`

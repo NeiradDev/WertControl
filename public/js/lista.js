@@ -264,46 +264,70 @@
   let scanRaf = null;
   let barcodeDetector = null;
 
-  async function openScanner() {
-    try {
-      barcodeDetector = barcodeDetector || new BarcodeDetector({ formats: ['code_128', 'ean_13', 'ean_8', 'upc_a'] });
-      scanStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-      const video = document.getElementById('scan-video');
-      video.srcObject = scanStream;
-      await video.play();
-      document.getElementById('scan-overlay').classList.add('open');
-      scanLoop();
-    } catch {
-      showToast('No se pudo acceder a la cámara.', 'fail');
-    }
+  const scanOverlay    = document.getElementById('scan-overlay');
+  const scanCameraMode = document.getElementById('scan-camera-mode');
+  const scanManualMode = document.getElementById('scan-manual-mode');
+  const scanInput      = document.getElementById('scan-input');
+
+  function applyScanned(value) {
+    closeScanner();
+    $('search').value = value;
+    applySearch();
   }
 
   function closeScanner() {
     cancelAnimationFrame(scanRaf);
     if (scanStream) { scanStream.getTracks().forEach((t) => t.stop()); scanStream = null; }
-    document.getElementById('scan-overlay').classList.remove('open');
+    scanOverlay.classList.remove('open');
+    scanInput.value = '';
+  }
+
+  async function openScanner() {
+    scanOverlay.classList.add('open');
+
+    // Cámara solo disponible en contexto seguro (HTTPS o localhost)
+    const canCamera = !!(navigator.mediaDevices && window.isSecureContext);
+
+    if (canCamera) {
+      scanCameraMode.style.display = '';
+      scanManualMode.style.display = 'none';
+      try {
+        barcodeDetector = barcodeDetector || new BarcodeDetector({ formats: ['code_128', 'ean_13', 'ean_8', 'upc_a'] });
+        scanStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        const video = document.getElementById('scan-video');
+        video.srcObject = scanStream;
+        await video.play();
+        scanLoop();
+        return;
+      } catch { /* cámara denegada → caer a modo manual */ }
+    }
+
+    // Modo manual: lector USB o teclado
+    scanCameraMode.style.display = 'none';
+    scanManualMode.style.display = '';
+    scanInput.focus();
   }
 
   async function scanLoop() {
     if (!scanStream) return;
     try {
       const barcodes = await barcodeDetector.detect(document.getElementById('scan-video'));
-      if (barcodes.length) {
-        const value = barcodes[0].rawValue;
-        closeScanner();
-        $('search').value = value;
-        applySearch();
-        return;
-      }
-    } catch { /* frame inválido, continuar */ }
+      if (barcodes.length) { applyScanned(barcodes[0].rawValue); return; }
+    } catch { /* frame inválido */ }
     scanRaf = requestAnimationFrame(scanLoop);
   }
 
+  // Lector USB / teclado: confirma con Enter o cuando llegan 10 dígitos seguidos
+  scanInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && scanInput.value.trim()) applyScanned(scanInput.value.trim());
+  });
+  scanInput.addEventListener('input', () => {
+    if (/^\d{10}$/.test(scanInput.value.trim())) applyScanned(scanInput.value.trim());
+  });
+
   $('btn-scan').addEventListener('click', openScanner);
   $('btn-close-scan').addEventListener('click', closeScanner);
-  document.getElementById('scan-overlay').addEventListener('click', (e) => {
-    if (e.target === document.getElementById('scan-overlay')) closeScanner();
-  });
+  scanOverlay.addEventListener('click', (e) => { if (e.target === scanOverlay) closeScanner(); });
 
   loadAreas();
   loadData();
