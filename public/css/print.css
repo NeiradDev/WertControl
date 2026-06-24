@@ -105,6 +105,8 @@ table.phones th, table.phones td {
 }
 table.phones th { background: #f3f4f6; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
 
+.no-tiene { color: #9ca3af; font-style: italic; }
+
 .warning-flag {
   display: inline-block;
   border: 1.5px solid #b45309;

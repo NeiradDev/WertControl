@@ -2,7 +2,8 @@
   "name": "barrido-activos",
   "version": "1.0.0",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "migrate": "node scripts/migrate.js"
   },
   "dependencies": {
     "exceljs": "^4.4.0",

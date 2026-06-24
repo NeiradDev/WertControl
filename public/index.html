@@ -55,35 +55,54 @@
           </label>
         </div>
 
-        <p class="section-title">Equipos</p>
-
-        <div class="field">
-          <label for="serial-laptop">Serial laptop</label>
-          <div class="serial-row">
-            <label class="phone-cargador" title="Cargador laptop">
-              <input type="checkbox" id="cargador-laptop">
-              Cargador
-            </label>
-            <input type="text" id="serial-laptop" placeholder="Serial de la laptop">
+        <div class="section-title-row">
+          <p class="section-title">Equipos</p>
+          <div class="equipo-toggles">
+            <label class="check-item"><input type="checkbox" id="tiene-laptop"><span>Laptop</span></label>
+            <label class="check-item"><input type="checkbox" id="tiene-telefono"><span>Teléfono</span></label>
+            <label class="check-item"><input type="checkbox" id="tiene-chip"><span>Chip</span></label>
           </div>
         </div>
 
-        <div class="field">
-          <label for="clave">Clave</label>
-          <input type="text" id="clave" placeholder="Clave del equipo">
+        <div id="laptop-section" class="equipo-section disabled">
+          <div class="field">
+            <label>Serial y clave de la laptop</label>
+            <div class="serial-row">
+              <label class="phone-cargador" title="Cargador laptop">
+                <input type="checkbox" id="cargador-laptop">
+                Cargador
+              </label>
+              <input type="text" id="serial-laptop" placeholder="Serial de la laptop">
+              <input type="text" id="clave" placeholder="Clave del equipo">
+            </div>
+          </div>
         </div>
 
-        <div class="field">
-          <div class="phones-header">
-            <span>Serial teléfono</span>
-            <span>Chip teléfono</span>
-            <span>Chip 2</span>
-            <span>PIN/Clave</span>
-            <span>Cargador</span>
-            <span></span>
+        <div id="telefono-section" class="equipo-section disabled">
+          <div class="field">
+            <div class="phones-header">
+              <span>IMEI 1</span>
+              <span>IMEI 2</span>
+              <span>PIN/Clave</span>
+              <span>Cargador</span>
+              <span></span>
+            </div>
+            <div class="phone-entries" id="phones-container"></div>
+            <button type="button" class="btn-add" id="btn-add-phone">+ Agregar teléfono</button>
           </div>
-          <div class="phone-entries" id="phones-container"></div>
-          <button type="button" class="btn-add" id="btn-add-phone">+ Agregar teléfono</button>
+        </div>
+
+        <div id="chip-section" class="equipo-section disabled">
+          <div class="field">
+            <div class="chips-header">
+              <span>Número</span>
+              <span>Operadora</span>
+              <span>Tipo</span>
+              <span></span>
+            </div>
+            <div class="chip-entries" id="chips-container"></div>
+            <button type="button" class="btn-add" id="btn-add-chip">+ Agregar chip</button>
+          </div>
         </div>
 
         <p class="section-title">Otros</p>
@@ -93,6 +112,13 @@
             <input type="checkbox" id="datos-personales">
             <span>El colaborador tiene datos personales en el equipo</span>
           </label>
+        </div>
+
+        <div id="acciones-section" class="equipo-section disabled">
+          <div class="field">
+            <label for="acciones-correctivas">Acciones correctivas</label>
+            <textarea id="acciones-correctivas" placeholder="Describa las acciones correctivas tomadas..."></textarea>
+          </div>
         </div>
 
         <div class="field mt-md">

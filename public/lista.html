@@ -13,10 +13,33 @@
       <h1>Registros <span class="badge" id="count-badge">0</span></h1>
       <div class="header-actions">
         <a href="/api/registros/export" class="btn-link btn-export">Exportar Excel</a>
+        <button class="btn-link btn-scan" id="btn-scan" title="Escanear código de barras">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+            <path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+            <line x1="7" y1="12" x2="17" y2="12"/>
+          </svg>
+          Escanear
+        </button>
         <a href="/config.html" class="btn-link">Configuración</a>
         <a href="/" class="btn-link">+ Nuevo registro</a>
       </div>
     </header>
+
+    <!-- Scanner overlay -->
+    <div class="scan-overlay" id="scan-overlay">
+      <div class="scan-box">
+        <div class="scan-header">
+          <span>Escanear código de barras</span>
+          <button class="btn-close" id="btn-close-scan">×</button>
+        </div>
+        <div class="scan-viewport">
+          <video id="scan-video" muted playsinline></video>
+          <div class="scan-reticle"></div>
+        </div>
+        <p class="scan-status" id="scan-status">Apunta al código de barras…</p>
+      </div>
+    </div>
 
     <div class="search-bar">
       <input type="text" id="search" placeholder="Buscar por nombre, cédula o área...">
@@ -73,35 +96,54 @@
           </label>
         </div>
 
-        <p class="section-title">Equipos</p>
-
-        <div class="field">
-          <label for="e-serial-laptop">Serial laptop</label>
-          <div class="serial-row">
-            <label class="phone-cargador" title="Cargador laptop">
-              <input type="checkbox" id="e-cargador-laptop">
-              Cargador
-            </label>
-            <input type="text" id="e-serial-laptop" placeholder="Serial de la laptop">
+        <div class="section-title-row">
+          <p class="section-title">Equipos</p>
+          <div class="equipo-toggles">
+            <label class="check-item"><input type="checkbox" id="e-tiene-laptop"><span>Laptop</span></label>
+            <label class="check-item"><input type="checkbox" id="e-tiene-telefono"><span>Teléfono</span></label>
+            <label class="check-item"><input type="checkbox" id="e-tiene-chip"><span>Chip</span></label>
           </div>
         </div>
 
-        <div class="field">
-          <label for="e-clave">Clave</label>
-          <input type="text" id="e-clave" placeholder="Clave del equipo">
+        <div id="e-laptop-section" class="equipo-section disabled">
+          <div class="field">
+            <label>Serial y clave de la laptop</label>
+            <div class="serial-row">
+              <label class="phone-cargador" title="Cargador laptop">
+                <input type="checkbox" id="e-cargador-laptop">
+                Cargador
+              </label>
+              <input type="text" id="e-serial-laptop" placeholder="Serial de la laptop">
+              <input type="text" id="e-clave" placeholder="Clave del equipo">
+            </div>
+          </div>
         </div>
 
-        <div class="field">
-          <div class="phones-header">
-            <span>Serial teléfono</span>
-            <span>Chip teléfono</span>
-            <span>Chip 2</span>
-            <span>PIN/Clave</span>
-            <span>Cargador</span>
-            <span></span>
+        <div id="e-telefono-section" class="equipo-section disabled">
+          <div class="field">
+            <div class="phones-header">
+              <span>IMEI 1</span>
+              <span>IMEI 2</span>
+              <span>PIN/Clave</span>
+              <span>Cargador</span>
+              <span></span>
+            </div>
+            <div class="phone-entries" id="e-phones-container"></div>
+            <button type="button" class="btn-add" id="e-btn-add-phone">+ Agregar teléfono</button>
           </div>
-          <div class="phone-entries" id="e-phones-container"></div>
-          <button type="button" class="btn-add" id="e-btn-add-phone">+ Agregar teléfono</button>
+        </div>
+
+        <div id="e-chip-section" class="equipo-section disabled">
+          <div class="field">
+            <div class="chips-header">
+              <span>Número</span>
+              <span>Operadora</span>
+              <span>Tipo</span>
+              <span></span>
+            </div>
+            <div class="chip-entries" id="e-chips-container"></div>
+            <button type="button" class="btn-add" id="e-btn-add-chip">+ Agregar chip</button>
+          </div>
         </div>
 
         <p class="section-title">Otros</p>
@@ -111,6 +153,13 @@
             <input type="checkbox" id="e-datos-personales">
             <span>El colaborador tiene datos personales en el equipo</span>
           </label>
+        </div>
+
+        <div id="e-acciones-section" class="equipo-section disabled">
+          <div class="field">
+            <label for="e-acciones-correctivas">Acciones correctivas</label>
+            <textarea id="e-acciones-correctivas" placeholder="Describa las acciones correctivas tomadas..."></textarea>
+          </div>
         </div>
 
         <div class="field mt-md">
@@ -128,6 +177,8 @@
 
   <div class="toast" id="toast"></div>
 
+  <!-- Polyfill BarcodeDetector: cubre Firefox, Safari y Chrome sin soporte nativo -->
+  <script src="https://cdn.jsdelivr.net/npm/barcode-detector@2/dist/es2019/polyfill.min.js"></script>
   <script src="/js/shared.js"></script>
   <script src="/js/lista.js"></script>
 </body>

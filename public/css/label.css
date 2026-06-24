@@ -1,0 +1,115 @@
+/* Etiqueta 51mm × 25mm — impresora 3NSTAR LDT114 */
+
+@page { size: 51mm 25mm; margin: 0; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Vista pantalla ── */
+@media screen {
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #e5e7eb;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 1rem;
+    gap: 1.5rem;
+  }
+
+  .toolbar {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  .btn-back {
+    font-size: 0.875rem;
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid #2563eb;
+    border-radius: 6px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .btn-back:hover { background: #2563eb; color: #fff; }
+
+  .btn-print {
+    padding: 0.4rem 1.1rem;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-print:hover { background: #1d4ed8; }
+
+  .label {
+    width: 51mm;
+    height: 25mm;
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+    border: 1px solid #d1d5db;
+    border-radius: 2px;
+  }
+}
+
+/* ── Vista impresión ── */
+@media print {
+  body { background: #fff; }
+  .toolbar { display: none; }
+}
+
+/* ── Etiqueta (aplica en ambas vistas) ── */
+.label {
+  width: 51mm;
+  height: 25mm;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5mm 2mm;
+  overflow: hidden;
+}
+
+.label-nombre {
+  font-size: 6.5pt;
+  font-weight: 700;
+  text-align: center;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.label-area {
+  font-size: 5.5pt;
+  color: #555;
+  text-align: center;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  margin-bottom: 0.5mm;
+}
+
+#barcode {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.label-cedula {
+  font-size: 6pt;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.08em;
+  margin-top: 0.3mm;
+}
+
+.placeholder { color: #9ca3af; font-size: 8pt; }

@@ -53,45 +53,25 @@ window.App = (() => {
 
     reset(phones) {
       this.container.innerHTML = '';
-      const list = phones && phones.length ? phones : [{ serial: '', chip: '', pin: '', cargador: false }];
+      const list = phones && phones.length ? phones : [{ imei1: '', imei2: '', pin: '', cargador: false }];
       list.forEach((p) => this.add(p));
     }
 
-    // Crea el input del segundo chip dentro de su celda (reemplaza el botón).
-    _addChip2Input(cell, value = '') {
-      cell.innerHTML = `<input type="text" placeholder="Chip 2" data-role="chip2" value="${value}" maxlength="10">`;
-      const inp = cell.querySelector('input');
-      bindDigitsOnly(inp);
-      return inp;
-    }
-
-    add(phone = { serial: '', chip: '', chip2: '', pin: '', cargador: false }) {
+    add(phone = { imei1: '', imei2: '', pin: '', cargador: false }) {
       const n = this.container.querySelectorAll('.phone-entry').length + 1;
-      const digits = (v) => String(v || '').replace(/\D/g, '').slice(0, 10);
+      // ponytail: imei1 falls back to legacy serial field for old records
+      const imei1 = phone.imei1 || phone.serial || '';
       const div = document.createElement('div');
       div.className = 'phone-entry';
       div.innerHTML = `
-        <input type="text" placeholder="Serial #${n}" data-role="serial" value="${escapeHtml(phone.serial || '')}">
-        <input type="text" placeholder="Chip #${n}" data-role="chip" value="${digits(phone.chip)}" maxlength="10">
-        <div class="chip2-cell"></div>
+        <input type="text" placeholder="IMEI 1 #${n}" data-role="imei1" value="${escapeHtml(imei1)}">
+        <input type="text" placeholder="IMEI 2 #${n}" data-role="imei2" value="${escapeHtml(phone.imei2 || '')}">
         <input type="text" placeholder="PIN/Clave #${n}" data-role="pin" value="${escapeHtml(phone.pin || '')}">
         <label class="phone-cargador" title="Cargador teléfono">
           <input type="checkbox" data-role="cargador" ${phone.cargador ? 'checked' : ''}>
           Cargador
         </label>
         <button type="button" class="btn-remove" title="Quitar">×</button>`;
-      bindDigitsOnly(div.querySelector('[data-role="chip"]'));
-
-      // Segundo chip: opcional. Con valor previo se muestra el input; si no, un botón.
-      const chip2Cell = div.querySelector('.chip2-cell');
-      if (phone.chip2) {
-        this._addChip2Input(chip2Cell, digits(phone.chip2));
-      } else {
-        chip2Cell.innerHTML = '<button type="button" class="btn-chip2" title="Agregar segundo chip">+ Chip 2</button>';
-        chip2Cell.querySelector('.btn-chip2').addEventListener('click', () =>
-          this._addChip2Input(chip2Cell).focus());
-      }
-
       div.querySelector('.btn-remove').addEventListener('click', () => {
         div.remove();
         this._renumber();
@@ -102,8 +82,8 @@ window.App = (() => {
     _renumber() {
       this.container.querySelectorAll('.phone-entry').forEach((entry, idx) => {
         const n = idx + 1;
-        entry.querySelector('[data-role="serial"]').placeholder = `Serial #${n}`;
-        entry.querySelector('[data-role="chip"]').placeholder = `Chip #${n}`;
+        entry.querySelector('[data-role="imei1"]').placeholder = `IMEI 1 #${n}`;
+        entry.querySelector('[data-role="imei2"]').placeholder = `IMEI 2 #${n}`;
         entry.querySelector('[data-role="pin"]').placeholder = `PIN/Clave #${n}`;
       });
     }
@@ -111,15 +91,63 @@ window.App = (() => {
     collect() {
       const phones = [];
       this.container.querySelectorAll('.phone-entry').forEach((entry) => {
-        const serial = normalize(entry.querySelector('[data-role="serial"]').value.trim());
-        const chip = entry.querySelector('[data-role="chip"]').value.trim();
-        const chip2El = entry.querySelector('[data-role="chip2"]');
-        const chip2 = chip2El ? chip2El.value.trim() : '';
+        const imei1 = normalize(entry.querySelector('[data-role="imei1"]').value.trim());
+        const imei2 = normalize(entry.querySelector('[data-role="imei2"]').value.trim());
         const pin = entry.querySelector('[data-role="pin"]').value.trim();
         const cargador = entry.querySelector('[data-role="cargador"]').checked;
-        if (serial || chip || chip2 || pin || cargador) phones.push({ serial, chip, chip2, pin, cargador });
+        if (imei1 || imei2 || pin || cargador) phones.push({ imei1, imei2, pin, cargador });
       });
       return phones;
+    }
+  }
+
+  // Manages the dynamic list of SIM chip entries inside a container.
+  class ChipList {
+    constructor(containerId) {
+      this.container = $(containerId);
+    }
+
+    reset(chips) {
+      this.container.innerHTML = '';
+      const list = chips && chips.length ? chips : [{ numero: '', operadora: '', tipo: 'prepago' }];
+      list.forEach((c) => this.add(c));
+    }
+
+    add(chip = { numero: '', operadora: '', tipo: 'prepago' }) {
+      const n = this.container.querySelectorAll('.chip-entry').length + 1;
+      const div = document.createElement('div');
+      div.className = 'chip-entry';
+      div.innerHTML = `
+        <input type="text" placeholder="Número #${n}" data-role="numero" value="${escapeHtml(chip.numero || '')}" maxlength="10">
+        <input type="text" placeholder="Operadora" data-role="operadora" value="${escapeHtml(chip.operadora || '')}">
+        <select data-role="tipo">
+          <option value="prepago" ${(chip.tipo || 'prepago') === 'prepago' ? 'selected' : ''}>Prepago</option>
+          <option value="postpago" ${chip.tipo === 'postpago' ? 'selected' : ''}>Postpago</option>
+        </select>
+        <button type="button" class="btn-remove" title="Quitar">×</button>`;
+      bindDigitsOnly(div.querySelector('[data-role="numero"]'));
+      div.querySelector('.btn-remove').addEventListener('click', () => {
+        div.remove();
+        this._renumber();
+      });
+      this.container.appendChild(div);
+    }
+
+    _renumber() {
+      this.container.querySelectorAll('.chip-entry').forEach((entry, idx) => {
+        entry.querySelector('[data-role="numero"]').placeholder = `Número #${idx + 1}`;
+      });
+    }
+
+    collect() {
+      const chips = [];
+      this.container.querySelectorAll('.chip-entry').forEach((entry) => {
+        const numero = entry.querySelector('[data-role="numero"]').value.trim();
+        const operadora = normalize(entry.querySelector('[data-role="operadora"]').value.trim());
+        const tipo = entry.querySelector('[data-role="tipo"]').value;
+        if (numero || operadora) chips.push({ numero, operadora, tipo });
+      });
+      return chips;
     }
   }
 
@@ -133,8 +161,8 @@ window.App = (() => {
     scope.querySelectorAll('.error-msg').forEach((el) => el.classList.remove('visible'));
   }
 
-  // Validates nombre/cedula/area + chip fields. `prefix` is '' (form) or 'e-' (edit).
-  function validate(prefix, phoneContainer) {
+  // Validates nombre/cedula/area. chipContainer optional — validates número (10 digits if filled).
+  function validate(prefix, phoneContainer, chipContainer) {
     let ok = true;
     const field = (name) => $(prefix + name).value.trim();
 
@@ -150,29 +178,43 @@ window.App = (() => {
     setError(prefix + 'area', prefix + 'err-area', areaEmpty);
     if (areaEmpty) ok = false;
 
-    phoneContainer.querySelectorAll('[data-role^="chip"]').forEach((input) => {
-      const v = input.value.trim();
-      const chipOk = !v || /^\d{10}$/.test(v);
-      input.classList.toggle('error', !chipOk);
-      if (!chipOk) ok = false;
-    });
+    if (chipContainer) {
+      chipContainer.querySelectorAll('[data-role="numero"]').forEach((input) => {
+        const v = input.value.trim();
+        const numOk = !v || /^\d{10}$/.test(v);
+        input.classList.toggle('error', !numOk);
+        if (!numOk) ok = false;
+      });
+    }
 
     return ok;
   }
 
   // Builds the registro payload from form fields. `prefix` is '' or 'e-'.
-  const buildPayload = (prefix, phoneList) => ({
-    nombre: normalize($(prefix + 'nombre').value.trim()),
-    cedula: $(prefix + 'cedula').value.trim(),
-    area: $(prefix + 'area').value,
-    accesorios: collectAccesorios(prefix),
-    serial_laptop: normalize($(prefix + 'serial-laptop').value.trim()),
-    cargador_laptop: $(prefix + 'cargador-laptop').checked,
-    clave: $(prefix + 'clave').value.trim(),
-    telefonos: phoneList.collect(),
-    datos_personales: $(prefix + 'datos-personales').checked,
-    observaciones: normalize($(prefix + 'observaciones').value.trim()),
-  });
+  const buildPayload = (prefix, phoneList, chipList) => {
+    const tieneLaptop = $(prefix + 'tiene-laptop')?.checked ?? true;
+    const tieneTelefono = $(prefix + 'tiene-telefono')?.checked ?? true;
+    const tieneChip = $(prefix + 'tiene-chip')?.checked ?? true;
+    return {
+      nombre: normalize($(prefix + 'nombre').value.trim()),
+      cedula: $(prefix + 'cedula').value.trim(),
+      area: $(prefix + 'area').value,
+      accesorios: collectAccesorios(prefix),
+      tiene_laptop: tieneLaptop,
+      serial_laptop: tieneLaptop ? normalize($(prefix + 'serial-laptop').value.trim()) : 'NO TIENE',
+      cargador_laptop: tieneLaptop && $(prefix + 'cargador-laptop').checked,
+      clave: tieneLaptop ? $(prefix + 'clave').value.trim() : 'NO TIENE',
+      tiene_telefono: tieneTelefono,
+      telefonos: tieneTelefono ? phoneList.collect() : [],
+      tiene_chip: tieneChip,
+      chips: tieneChip && chipList ? chipList.collect() : [],
+      datos_personales: $(prefix + 'datos-personales').checked,
+      acciones_correctivas: $(prefix + 'datos-personales').checked
+        ? $(prefix + 'acciones-correctivas').value.trim()
+        : '',
+      observaciones: normalize($(prefix + 'observaciones').value.trim()),
+    };
+  };
 
   const JSON_HEADERS = { 'Content-Type': 'application/json' };
   const api = {
@@ -204,7 +246,7 @@ window.App = (() => {
 
   return {
     $, normalize, escapeHtml, fmtDate, showToast, bindDigitsOnly,
-    ACCESORIOS, collectAccesorios, setAccesorios, PhoneList,
+    ACCESORIOS, collectAccesorios, setAccesorios, PhoneList, ChipList,
     fillAreaSelect, setError, clearErrors, validate, buildPayload, api,
   };
 })();

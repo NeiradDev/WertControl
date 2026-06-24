@@ -1,7 +1,10 @@
 /* Shared base styles for all pages */
 
 /* Plantilla de columnas de teléfono compartida por header y filas → alinean. */
-:root { --phone-cols: 1fr 1fr 1fr 1fr 112px 32px; }
+:root {
+  --phone-cols: 1fr 1fr 1fr 112px 32px;
+  --chip-cols: 1fr 1fr 120px 32px;
+}
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -160,7 +163,34 @@ textarea { resize: vertical; min-height: 90px; }
 }
 .btn-del:hover { background: #fecaca; }
 
-/* Serial laptop con su check de cargador al lado */
+/* Título de sección con toggles de equipo al lado */
+.section-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #f3f4f6;
+}
+.section-title-row .section-title { margin-top: 0; padding-top: 0; border-top: none; margin-bottom: 0; }
+.equipo-toggles { display: flex; gap: 0.4rem; }
+
+/* Sección colapsable con deslizamiento */
+.equipo-section {
+  overflow: hidden;
+  max-height: 800px;
+  opacity: 1;
+  margin-top: 0.75rem;
+  transition: max-height 0.35s ease, opacity 0.25s ease, margin-top 0.3s ease;
+}
+.equipo-section.disabled {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+  pointer-events: none;
+}
+
+/* Serial laptop + clave en la misma fila */
 .serial-row { display: flex; gap: 0.6rem; align-items: center; }
 .serial-row input { flex: 1; }
 
@@ -177,23 +207,33 @@ textarea { resize: vertical; min-height: 90px; }
 
 .phone-entry input { margin: 0; }
 
-/* Celda del segundo chip: botón "+ Chip 2" o, al activarse, el input */
-.chip2-cell { display: flex; }
-.chip2-cell input { width: 100%; }
-.btn-chip2 {
-  width: 100%;
-  padding: 0.45rem;
-  border: 1.5px dashed #9ca3af;
-  border-radius: 7px;
-  background: transparent;
-  color: #6b7280;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: border-color 0.15s, color 0.15s;
+/* Chip entries (SIM cards) */
+.chip-entries { display: flex; flex-direction: column; gap: 0.6rem; }
+
+.chip-entry {
+  display: grid;
+  grid-template-columns: var(--chip-cols);
+  gap: 0.6rem;
+  align-items: center;
+  animation: fadeIn 0.15s ease;
 }
-.btn-chip2:hover { border-color: #2563eb; color: #2563eb; }
+
+.chip-entry input, .chip-entry select { margin: 0; }
+
+.chips-header {
+  display: grid;
+  grid-template-columns: var(--chip-cols);
+  gap: 0.6rem;
+  margin-bottom: 0.25rem;
+}
+
+.chips-header span {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
 
 .phone-cargador {
   display: flex;
@@ -313,7 +353,20 @@ textarea { resize: vertical; min-height: 90px; }
     background: #fafafa;
   }
 
-  .phone-entry > [data-role="serial"] { grid-column: 1 / -1; }
+  .phone-entry > [data-role="imei1"] { grid-column: 1 / -1; }
   .phone-cargador { justify-content: center; }
   .btn-remove { width: 100%; }
+
+  .chips-header { display: none; }
+
+  .chip-entry {
+    grid-template-columns: 1fr 1fr;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.65rem;
+    background: #fafafa;
+  }
+
+  .chip-entry > [data-role="numero"] { grid-column: 1 / -1; }
+  .chip-entry > select { grid-column: 1 / -1; }
 }

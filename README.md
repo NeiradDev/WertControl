@@ -17,14 +17,18 @@ Los datos se guardan en un archivo JSON (sin base de datos).
 ├── public/                     Frontend estático servido por Express
 │   ├── index.html              Formulario de nuevo registro
 │   ├── lista.html              Listado + modal de edición
+│   ├── print.html              Acta imprimible (A4)
+│   ├── config.html             Gestión de áreas
 │   ├── css/
-│   │   ├── base.css            Estilos compartidos por ambas páginas
+│   │   ├── base.css            Estilos compartidos (form + modal)
 │   │   ├── form.css            Estilos del formulario
-│   │   └── lista.css           Estilos del listado y modal
+│   │   ├── lista.css           Estilos del listado y modal
+│   │   └── print.css           Estilos del acta imprimible
 │   └── js/
-│       ├── shared.js           Helpers comunes (validación, API, teléfonos…)
+│       ├── shared.js           Helpers comunes (PhoneList, ChipList, buildPayload…)
 │       ├── form.js             Lógica del formulario
-│       └── lista.js            Lógica del listado y edición
+│       ├── lista.js            Lógica del listado y edición
+│       └── print.js            Lógica del acta imprimible
 ├── data/
 │   └── registros.json          Almacenamiento de los registros (persistente)
 ├── Dockerfile
@@ -107,29 +111,40 @@ Backup: copiar el archivo `data/registros.json`.
 
 Base: `/api/registros`
 
-| Método | Ruta                  | Descripción                          | Respuesta                     |
-|--------|-----------------------|--------------------------------------|-------------------------------|
-| GET    | `/api/registros`      | Lista todos los registros            | `200` → array de registros    |
-| POST   | `/api/registros`      | Crea un registro                     | `201` → `{ ok: true, id }`    |
-| PUT    | `/api/registros/:id`  | Actualiza un registro existente      | `200` → `{ ok: true }` / `404`|
+| Método | Ruta                    | Descripción                          | Respuesta                      |
+|--------|-------------------------|--------------------------------------|--------------------------------|
+| GET    | `/api/registros`        | Lista todos los registros            | `200` → array de registros     |
+| GET    | `/api/registros/:id`    | Obtiene un registro por ID           | `200` → registro / `404`       |
+| GET    | `/api/registros/export` | Exporta todos los registros a .xlsx  | `200` → archivo Excel          |
+| POST   | `/api/registros`        | Crea un registro                     | `201` → `{ ok: true, id }`     |
+| PUT    | `/api/registros/:id`    | Actualiza un registro existente      | `200` → `{ ok: true }` / `404` |
 
 ### Forma de un registro
 
 ```json
 {
+  "id": 1781557441260,
+  "fecha": "2026-06-15T21:04:01.260Z",
   "nombre": "JUAN PEREZ",
   "cedula": "1234567890",
   "area": "Callcenter",
-  "accesorios": ["Mouse", "Cargador laptop"],
+  "accesorios": ["Mouse", "Mousepad"],
+  "tiene_laptop": true,
   "serial_laptop": "ABC123",
+  "cargador_laptop": true,
+  "clave": "1234",
+  "tiene_telefono": true,
   "telefonos": [
-    { "serial": "S1", "chip": "0987654321", "cargador": true }
+    { "imei1": "123456789012345", "imei2": "", "pin": "0000", "cargador": true }
   ],
-  "datos_personales": false,
-  "observaciones": "",
-  "id": 1781557441260,
-  "fecha": "2026-06-15T21:04:01.260Z"
+  "tiene_chip": true,
+  "chips": [
+    { "numero": "0987654321", "operadora": "CLARO", "tipo": "prepago" }
+  ],
+  "datos_personales": true,
+  "acciones_correctivas": "Se solicitó borrado de datos",
+  "observaciones": ""
 }
 ```
 
-Los campos `id` y `fecha` los asigna el servidor al crear el registro.
+Los campos `id` y `fecha` los asigna el servidor al crear. Cuando `tiene_laptop/telefono/chip` es `false`, los campos correspondientes se guardan como `'NO TIENE'` / `[]`.
