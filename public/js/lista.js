@@ -292,7 +292,7 @@
       scanCameraMode.style.display = '';
       scanManualMode.style.display = 'none';
       try {
-        scanStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        scanStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
         const video = document.getElementById('scan-video');
         video.srcObject = scanStream;
         await video.play();
